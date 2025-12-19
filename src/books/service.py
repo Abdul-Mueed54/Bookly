@@ -9,15 +9,15 @@ class BookService:
     async def get_all_books(self, session: AsyncSession):
         statement = select(Book).order_by(desc(Book.created_at))
 
-        result = await session.exec(statement)
+        result = await session.execute(statement)
 
-        return result
+        return result.scalars().all()
 
-    async def get_book_by_uid(self, book_id: uuid, session: AsyncSession):
-        statement = select(Book).where(Book.uid == book_id)
+    async def get_book_by_uid(self, book_uid: uuid, session: AsyncSession):
+        statement = select(Book).where(Book.uid == book_uid)
 
-        result = await session.exec(statement)
-        book = result.first()
+        result = await session.execute(statement)
+        book = result.scalars().first()
         return book if book is not None else None
 
     async def create_book(self, book_data: CreateBookModel, session: AsyncSession):
@@ -28,9 +28,9 @@ class BookService:
         return new_book
 
     async def update_book(
-        self, book_id: uuid, updated_data: UpdateBookModel, session: AsyncSession
+        self, book_uid: uuid, updated_data: UpdateBookModel, session: AsyncSession
     ):
-        book_to_update = self.get_book_by_uid(book_id, session)
+        book_to_update = await self.get_book_by_uid(book_uid, session)
         if book_to_update is not None:
             updated_book_data = updated_data.model_dump()
 
@@ -41,14 +41,13 @@ class BookService:
             return book_to_update
         return None
 
-    async def delete_book(self, book_id, session: AsyncSession):
-        book_to_delete = self.get_book_by_uid(book_id, session)
+    async def delete_book(self, book_uid, session: AsyncSession):
+        book_to_delete = await self.get_book_by_uid(book_uid, session)
 
         if book_to_delete is not None:
             await session.delete(book_to_delete)
             await session.commit()
+            return {}
 
         else:
             return None
-
-        pass
