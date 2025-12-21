@@ -15,13 +15,13 @@ class UserService:
         result = await session.execute(statement)
 
         user = result.scalars().first()
-        console.print(f"[bold green]user from get_user{user}[/bold green]")
+        # console.print(f"[bold green]user from get_user{user}[/bold green]")
         return user
 
 
     async def user_exists(self, email: str, session: AsyncSession):
         user = await self.get_user_by_email(email, session)
-        console.print(f"[bold green]user from get_user: {user}[/bold green]")
+        # console.print(f"[bold green]user from get_user: {user}[/bold green]")
         if user:
             return True 
         return False
