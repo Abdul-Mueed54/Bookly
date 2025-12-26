@@ -18,17 +18,19 @@ def verify_password(password: str, hash: str) -> bool:
     return passwd_context.verify(password, hash)
 
 
-def create_access_token(user_data: dict, expiry: timedelta = None, refresh: bool = False):
+def create_access_token(
+    user_data: dict, expiry: timedelta = None, refresh: bool = False
+):
     payload = {}
 
     payload["user"] = user_data
 
     if expiry is not None:
-        payload["exp"] = datetime.now() + expiry
+        payload["exp"] = datetime.utcnow() + expiry
     else:
-        payload["exp"] = datetime.now() + timedelta(seconds=ACCESS_TOKEN_EXPIRY)
+        payload["exp"] = datetime.utcnow() + timedelta(seconds=ACCESS_TOKEN_EXPIRY)
 
-    payload["jti"] = str(uuid.uuid4)
+    payload["jti"] = str(uuid.uuid4())
     payload["refresh"] = refresh
 
     token = jwt.encode(
@@ -43,6 +45,7 @@ def decode_token(token: str):
         token_data = jwt.decode(
             jwt=token, key=Config.JWT_SECRET, algorithms=[Config.JWT_ALGORITHM]
         )
+        return token_data
 
     except jwt.PyJWTError as e:
         logging.exception(e)

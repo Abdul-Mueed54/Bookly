@@ -31,6 +31,7 @@ class UserService:
         new_user = User(**user_data_dict)
         passwd = user_data_dict['password']
         new_user.password = generate_passwd_hash(passwd)
+        new_user.role = "user"
         
 
         session.add(new_user)
