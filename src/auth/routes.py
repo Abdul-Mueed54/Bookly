@@ -95,7 +95,7 @@ async def get_new_access_token(token_details: dict = Depends(RefreshTokenBearer(
     )
 
 
-@auth_router.get("/me")
+@auth_router.get("/me", response_model= UserModel)
 async def ge_current_user(
     user=Depends(get_current_user), role: bool = Depends(role_checker)
 ):

@@ -12,6 +12,11 @@ class BookService:
         result = await session.execute(statement)
 
         return result.scalars().all()
+    
+    async def get_user_books(self, user_uid: str, session: AsyncSession):
+        statement = select(Book).where(Book.user_uid == user_uid)
+        result = await session.execute(statement)
+        return result.scalars().all()
 
     async def get_book_by_uid(self, book_uid: uuid, session: AsyncSession):
         statement = select(Book).where(Book.uid == book_uid)
@@ -20,9 +25,12 @@ class BookService:
         book = result.scalars().first()
         return book if book is not None else None
 
-    async def create_book(self, book_data: CreateBookModel, session: AsyncSession):
+    async def create_book(
+        self, book_data: CreateBookModel, user_uid: str, session: AsyncSession
+    ):
         created_book_data = book_data.model_dump()
         new_book = Book(**created_book_data)
+        new_book.user_uid = user_uid
         session.add(new_book)
         await session.commit()
         return new_book

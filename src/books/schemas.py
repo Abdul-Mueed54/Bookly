@@ -11,6 +11,7 @@ class Books(BaseModel):
     published_year: int
     language: str
     pages: int
+    user_uid: uuid.UUID
     created_at: datetime
     updated_at: datetime
 

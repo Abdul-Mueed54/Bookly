@@ -1,8 +1,10 @@
-from sqlmodel import SQLModel, Field, Column
+from sqlmodel import SQLModel, Field, Column, Relationship
 from pydantic import EmailStr
 import sqlalchemy.dialects.postgresql as pg
 from datetime import datetime
 import uuid
+from typing import List
+from src.books import models
 
 
 class User(SQLModel, table=True):
@@ -21,6 +23,9 @@ class User(SQLModel, table=True):
     is_verified: bool = Field(default=False)
     created_at: datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
     updated_at: datetime = Field(sa_column=Column(pg.TIMESTAMP, default=datetime.now))
+    books: List["models.Book"] = Relationship(
+        back_populates="user", sa_relationship_kwargs={"lazy": "selectin"}
+    )
 
     def __repr__(self):
         return f"<User {self.username}>"
