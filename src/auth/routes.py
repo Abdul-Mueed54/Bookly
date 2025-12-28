@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, status
-from src.auth.schemas import UserCreateModel, UserModel, UserLoginModel
+from src.auth.schemas import UserCreateModel, UserModel, UserLoginModel, UserBooksModel
 from src.auth.service import UserService
 from sqlalchemy.ext.asyncio.session import AsyncSession
 from src.db.main import get_session
@@ -15,6 +15,11 @@ from src.auth.dependencies import (
     RoleChecker,
 )
 from src.db.redis import add_jti_to_blocklist
+from src.errors import (
+    UserAlreadyExist,
+    InvalidCredentials,
+    InvalidToken,
+)
 
 console = Console()
 
@@ -32,9 +37,7 @@ async def create_user_account(
 ):
     user = await user_service.user_exists(user_data.email, session)
     if user:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN, detail="user already exist"
-        )
+        raise UserAlreadyExist()
 
     new_user = await user_service.create_user(user_data, session)
 
@@ -77,9 +80,7 @@ async def login_users(
                 }
             )
 
-    raise HTTPException(
-        status_code=status.HTTP_401_UNAUTHORIZED, detail="invalid email or password"
-    )
+    raise InvalidCredentials()
 
 
 @auth_router.get("/refresh-token")
@@ -90,15 +91,14 @@ async def get_new_access_token(token_details: dict = Depends(RefreshTokenBearer(
         new_access_token = create_access_token(user_data=token_details["user"])
         return JSONResponse(content={"access_token": new_access_token})
 
-    raise HTTPException(
-        status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid Or Expire Token"
-    )
+    raise InvalidToken()
 
 
-@auth_router.get("/me", response_model= UserModel)
+@auth_router.get("/me", response_model=UserBooksModel)
 async def ge_current_user(
     user=Depends(get_current_user), role: bool = Depends(role_checker)
 ):
+
     return user
 
 

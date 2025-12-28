@@ -1,5 +1,5 @@
 from sqlalchemy.ext.asyncio.session import AsyncSession
-from src.books.models import Book
+from src.db.models import Book
 from src.books.schemas import CreateBookModel, UpdateBookModel
 from sqlmodel import select, desc
 import uuid
