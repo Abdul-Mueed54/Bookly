@@ -1,6 +1,8 @@
 from fastapi import FastAPI, status
 from fastapi.requests import Request
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.middleware.trustedhost import TrustedHostMiddleware
 import time
 from rich.console import Console
 import logging
@@ -22,16 +24,26 @@ def register_middleware(app: FastAPI):
         console.print(f"[bold white]{message}[/bold white]")
         return response
 
-    @app.middleware("http")
-    async def authorization(request: Request, call_next):
-        if not "Authorization" in request.headers:
-            return JSONResponse(
-                content={
-                    "message": "Not Authenticated",
-                    "resolution": "Please provide the credentials to proceed",
-                },
-                status_code=status.HTTP_401_UNAUTHORIZED,
-            )
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["*"],
+        allow_methods=["*"],
+        allow_headers=["*"],
+        allow_credentials=False,
+    )
 
-        response = call_next(request)
-        return response
+    app.add_middleware(TrustedHostMiddleware, allowed_hosts=["localhost", "127.0.0.1"])
+
+    # @app.middleware("http")
+    # async def authorization(request: Request, call_next):
+    #     if not "Authorization" in request.headers:
+    #         return JSONResponse(
+    #             content={
+    #                 "message": "Not Authenticated",
+    #                 "resolution": "Please provide the credentials to proceed",
+    #             },
+    #             status_code=status.HTTP_401_UNAUTHORIZED,
+    #         )
+
+    #     response = call_next(request)
+    #     return response

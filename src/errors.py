@@ -52,6 +52,12 @@ class InsufficientPermission(BooklyExceptions):
     pass
 
 
+class AccountNotVerified(Exception):
+    """Account is not verified"""
+
+    pass
+
+
 class BookNotFound(BooklyExceptions):
     """Book not found"""
 
@@ -169,6 +175,18 @@ def register_all_handlers(app: FastAPI):
             initial_details={
                 "message": "User does not have sufficient permissions to perform the task",
                 "error": "Insufficient_permission",
+            },
+        ),
+    )
+
+    app.add_exception_handler(
+        AccountNotVerified,
+        create_exception_handler(
+            status_code=status.HTTP_403_FORBIDDEN,
+            initial_details={
+                "message": "Your Account is not verified",
+                "error": "Account_not_verified",
+                "resolution": "Please check your email for verification details",
             },
         ),
     )
