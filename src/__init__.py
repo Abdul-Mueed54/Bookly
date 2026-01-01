@@ -25,6 +25,9 @@ app = FastAPI(
     title="Bookly",
     description="A REST API for book review web service",
     version=version,
+    contact={
+        "email": "mueed9972@gmail.com"
+    }
 )
 
 register_all_handlers(app)

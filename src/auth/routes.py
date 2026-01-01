@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, status
+from fastapi import APIRouter, Depends, status, BackgroundTasks
 from src.auth.schemas import (
     UserCreateModel,
     UserModel,
@@ -32,6 +32,7 @@ from src.auth.dependencies import (
 from src.db.redis import add_jti_to_blocklist
 from src.mail import create_message, mail
 from src.errors import UserAlreadyExist, InvalidCredentials, InvalidToken, UserNotFound
+from src.celery_tasks import send_email
 
 console = Console()
 
@@ -46,10 +47,9 @@ async def send_mail(emails: EmailModel):
     emails = emails.addresses
 
     html = "<h1>Welcome to the App</h1>"
+    subject = "Welcome Message"
 
-    message = create_message(recipients=emails, subject="Welcome Message", body=html)
-
-    await mail.send_message(message)
+    send_email.delay(emails, subject, html)
 
     return {"message": f"mail has been sent to {emails}"}
 
@@ -60,7 +60,9 @@ async def send_mail(emails: EmailModel):
     status_code=status.HTTP_201_CREATED,
 )
 async def create_user_account(
-    user_data: UserCreateModel, session: AsyncSession = Depends(get_session)
+    user_data: UserCreateModel,
+    bg_tasks: BackgroundTasks,
+    session: AsyncSession = Depends(get_session),
 ):
     user = await user_service.user_exists(user_data.email, session)
     if user:
@@ -75,11 +77,11 @@ async def create_user_account(
         <h1>Verify your Email</h1>
         <p>Please click this <a href="{link}">link</a> to verify your Email
     """
-    message = create_message(
-        recipients=[user_data.email], subject="Verify Your Email", body=html_message
-    )
 
-    await mail.send_message(message)
+    emails = [user_data.email]
+    subject = "Email Verification"
+
+    send_email.delay(emails, subject, html_message)
 
     return {
         "message": "Your Account has been created successfully, check your email to verify account",
@@ -160,7 +162,7 @@ async def get_new_access_token(token_details: dict = Depends(RefreshTokenBearer(
 
 
 @auth_router.get("/me", response_model=UserBooksModel)
-async def ge_current_user(
+async def get_current_user(
     user=Depends(get_current_user), role: bool = Depends(role_checker)
 ):
 
