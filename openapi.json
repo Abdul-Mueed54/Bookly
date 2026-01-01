@@ -1,0 +1,833 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Bookly",
+    "description": "A REST API for book review web service",
+    "contact": { "email": "mueed9972@gmail.com" },
+    "version": "v1"
+  },
+  "paths": {
+    "/api/v1/books/": {
+      "get": {
+        "tags": ["books"],
+        "summary": "Get All Books",
+        "operationId": "get_all_books_api_v1_books__get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "items": { "$ref": "#/components/schemas/Books" },
+                  "type": "array",
+                  "title": "Response Get All Books Api V1 Books  Get"
+                }
+              }
+            }
+          }
+        },
+        "security": [{ "AccessTokenBearer": [] }]
+      }
+    },
+    "/api/v1/books/user/{user_uid}": {
+      "get": {
+        "tags": ["books"],
+        "summary": "Get User Books Submission",
+        "operationId": "get_user_books_submission_api_v1_books_user__user_uid__get",
+        "security": [{ "AccessTokenBearer": [] }],
+        "parameters": [
+          {
+            "name": "user_uid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "User Uid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/Books" },
+                  "title": "Response Get User Books Submission Api V1 Books User  User Uid  Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/books/{book_uid}": {
+      "get": {
+        "tags": ["books"],
+        "summary": "Get Book By Uid",
+        "operationId": "get_book_by_uid_api_v1_books__book_uid__get",
+        "security": [{ "AccessTokenBearer": [] }],
+        "parameters": [
+          {
+            "name": "book_uid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Book Uid" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BookDetailModel" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["books"],
+        "summary": "Delete Book",
+        "operationId": "delete_book_api_v1_books__book_uid__delete",
+        "security": [{ "AccessTokenBearer": [] }],
+        "parameters": [
+          {
+            "name": "book_uid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Book Uid" }
+          }
+        ],
+        "responses": {
+          "204": { "description": "Successful Response" },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags": ["books"],
+        "summary": "Update Book",
+        "operationId": "update_book_api_v1_books__book_uid__patch",
+        "security": [{ "AccessTokenBearer": [] }],
+        "parameters": [
+          {
+            "name": "book_uid",
+            "in": "path",
+            "required": true,
+            "schema": { "title": "Book Uid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateBookModel" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Books" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/books/create-book": {
+      "post": {
+        "tags": ["books"],
+        "summary": "Craete Book",
+        "operationId": "craete_book_api_v1_books_create_book_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/CreateBookModel" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Books" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        },
+        "security": [{ "AccessTokenBearer": [] }]
+      }
+    },
+    "/api/v1/users/send_mail": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Send Mail",
+        "operationId": "send_mail_api_v1_users_send_mail_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/EmailModel" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/signup": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Create User Account",
+        "operationId": "create_user_account_api_v1_users_signup_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserCreateModel" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/verify/{token}": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Verify User Account",
+        "operationId": "verify_user_account_api_v1_users_verify__token__get",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Token" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/login": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Login Users",
+        "operationId": "login_users_api_v1_users_login_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UserLoginModel" }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/refresh-token": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Get New Access Token",
+        "operationId": "get_new_access_token_api_v1_users_refresh_token_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        },
+        "security": [{ "RefreshTokenBearer": [] }]
+      }
+    },
+    "/api/v1/users/me": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Get Current User",
+        "operationId": "get_current_user_api_v1_users_me_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserBooksModel" }
+              }
+            }
+          }
+        },
+        "security": [{ "AccessTokenBearer": [] }]
+      }
+    },
+    "/api/v1/users/logout": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Revooke Token",
+        "operationId": "revooke_token_api_v1_users_logout_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          }
+        },
+        "security": [{ "AccessTokenBearer": [] }]
+      }
+    },
+    "/api/v1/users/password-reset-request": {
+      "post": {
+        "tags": ["users"],
+        "summary": "Password Reset Request",
+        "operationId": "password_reset_request_api_v1_users_password_reset_request_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetRequestModel"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/password-reset-confirm/{token}": {
+      "get": {
+        "tags": ["users"],
+        "summary": "Reset Account Password",
+        "operationId": "reset_account_password_api_v1_users_password_reset_confirm__token__get",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Token" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetConfirmModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": { "application/json": { "schema": {} } }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/reviews/book/{book_uid}": {
+      "post": {
+        "tags": ["reviews"],
+        "summary": "Add Review To Book",
+        "operationId": "add_review_to_book_api_v1_reviews_book__book_uid__post",
+        "security": [{ "AccessTokenBearer": [] }],
+        "parameters": [
+          {
+            "name": "book_uid",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string", "title": "Book Uid" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/ReviewCreateModel" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ReviewModel" }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/HTTPValidationError" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Book": {
+        "properties": {
+          "uid": { "type": "string", "format": "uuid", "title": "Uid" },
+          "title": { "type": "string", "title": "Title" },
+          "author": { "type": "string", "title": "Author" },
+          "publisher": { "type": "string", "title": "Publisher" },
+          "published_year": { "type": "integer", "title": "Published Year" },
+          "language": { "type": "string", "title": "Language" },
+          "pages": { "type": "integer", "title": "Pages" },
+          "user_uid": {
+            "anyOf": [
+              { "type": "string", "format": "uuid" },
+              { "type": "null" }
+            ],
+            "title": "User Uid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uid",
+          "title",
+          "author",
+          "publisher",
+          "published_year",
+          "language",
+          "pages",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "Book"
+      },
+      "BookDetailModel": {
+        "properties": {
+          "uid": { "type": "string", "format": "uuid", "title": "Uid" },
+          "title": { "type": "string", "title": "Title" },
+          "author": { "type": "string", "title": "Author" },
+          "publisher": { "type": "string", "title": "Publisher" },
+          "published_year": { "type": "integer", "title": "Published Year" },
+          "language": { "type": "string", "title": "Language" },
+          "pages": { "type": "integer", "title": "Pages" },
+          "user_uid": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Uid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "reviews": {
+            "items": { "$ref": "#/components/schemas/ReviewModel" },
+            "type": "array",
+            "title": "Reviews",
+            "default": []
+          }
+        },
+        "type": "object",
+        "required": [
+          "uid",
+          "title",
+          "author",
+          "publisher",
+          "published_year",
+          "language",
+          "pages",
+          "user_uid",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "BookDetailModel"
+      },
+      "Books": {
+        "properties": {
+          "uid": { "type": "string", "format": "uuid", "title": "Uid" },
+          "title": { "type": "string", "title": "Title" },
+          "author": { "type": "string", "title": "Author" },
+          "publisher": { "type": "string", "title": "Publisher" },
+          "published_year": { "type": "integer", "title": "Published Year" },
+          "language": { "type": "string", "title": "Language" },
+          "pages": { "type": "integer", "title": "Pages" },
+          "user_uid": {
+            "type": "string",
+            "format": "uuid",
+            "title": "User Uid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uid",
+          "title",
+          "author",
+          "publisher",
+          "published_year",
+          "language",
+          "pages",
+          "user_uid",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "Books"
+      },
+      "CreateBookModel": {
+        "properties": {
+          "title": { "type": "string", "title": "Title" },
+          "author": { "type": "string", "title": "Author" },
+          "publisher": { "type": "string", "title": "Publisher" },
+          "published_year": { "type": "integer", "title": "Published Year" },
+          "language": { "type": "string", "title": "Language" },
+          "pages": { "type": "integer", "title": "Pages" }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "author",
+          "publisher",
+          "published_year",
+          "language",
+          "pages"
+        ],
+        "title": "CreateBookModel"
+      },
+      "EmailModel": {
+        "properties": {
+          "addresses": {
+            "items": { "type": "string" },
+            "type": "array",
+            "title": "Addresses"
+          }
+        },
+        "type": "object",
+        "required": ["addresses"],
+        "title": "EmailModel"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": { "$ref": "#/components/schemas/ValidationError" },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "PasswordResetConfirmModel": {
+        "properties": {
+          "new_password": { "type": "string", "title": "New Password" },
+          "confirm_new_password": {
+            "type": "string",
+            "title": "Confirm New Password"
+          }
+        },
+        "type": "object",
+        "required": ["new_password", "confirm_new_password"],
+        "title": "PasswordResetConfirmModel"
+      },
+      "PasswordResetRequestModel": {
+        "properties": { "email": { "type": "string", "title": "Email" } },
+        "type": "object",
+        "required": ["email"],
+        "title": "PasswordResetRequestModel"
+      },
+      "ReviewCreateModel": {
+        "properties": {
+          "rating": { "type": "integer", "title": "Rating" },
+          "review_text": { "type": "string", "title": "Review Text" }
+        },
+        "type": "object",
+        "required": ["rating", "review_text"],
+        "title": "ReviewCreateModel"
+      },
+      "ReviewModel": {
+        "properties": {
+          "uid": { "type": "string", "format": "uuid", "title": "Uid" },
+          "rating": { "type": "integer", "title": "Rating" },
+          "review_text": { "type": "string", "title": "Review Text" },
+          "user_uid": {
+            "anyOf": [
+              { "type": "string", "format": "uuid" },
+              { "type": "null" }
+            ],
+            "title": "User Uid"
+          },
+          "book_uid": {
+            "anyOf": [
+              { "type": "string", "format": "uuid" },
+              { "type": "null" }
+            ],
+            "title": "Book Uid"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uid",
+          "rating",
+          "review_text",
+          "user_uid",
+          "book_uid",
+          "created_at",
+          "updated_at"
+        ],
+        "title": "ReviewModel"
+      },
+      "UpdateBookModel": {
+        "properties": {
+          "title": { "type": "string", "title": "Title" },
+          "author": { "type": "string", "title": "Author" },
+          "publisher": { "type": "string", "title": "Publisher" },
+          "published_year": { "type": "integer", "title": "Published Year" },
+          "language": { "type": "string", "title": "Language" },
+          "pages": { "type": "integer", "title": "Pages" }
+        },
+        "type": "object",
+        "required": [
+          "title",
+          "author",
+          "publisher",
+          "published_year",
+          "language",
+          "pages"
+        ],
+        "title": "UpdateBookModel"
+      },
+      "UserBooksModel": {
+        "properties": {
+          "uid": { "type": "string", "format": "uuid", "title": "Uid" },
+          "username": { "type": "string", "title": "Username" },
+          "email": { "type": "string", "format": "email", "title": "Email" },
+          "first_name": { "type": "string", "title": "First Name" },
+          "last_name": { "type": "string", "title": "Last Name" },
+          "is_verified": { "type": "boolean", "title": "Is Verified" },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "updated_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Updated At"
+          },
+          "books": {
+            "items": { "$ref": "#/components/schemas/Book" },
+            "type": "array",
+            "title": "Books"
+          },
+          "reviews": {
+            "items": { "$ref": "#/components/schemas/ReviewModel" },
+            "type": "array",
+            "title": "Reviews"
+          }
+        },
+        "type": "object",
+        "required": [
+          "uid",
+          "username",
+          "email",
+          "first_name",
+          "last_name",
+          "is_verified",
+          "created_at",
+          "updated_at",
+          "books"
+        ],
+        "title": "UserBooksModel"
+      },
+      "UserCreateModel": {
+        "properties": {
+          "username": {
+            "type": "string",
+            "maxLength": 20,
+            "title": "Username"
+          },
+          "email": { "type": "string", "format": "email", "title": "Email" },
+          "password": { "type": "string", "title": "Password" },
+          "first_name": { "type": "string", "title": "First Name" },
+          "last_name": { "type": "string", "title": "Last Name" }
+        },
+        "type": "object",
+        "required": [
+          "username",
+          "email",
+          "password",
+          "first_name",
+          "last_name"
+        ],
+        "title": "UserCreateModel"
+      },
+      "UserLoginModel": {
+        "properties": {
+          "email": { "type": "string", "format": "email", "title": "Email" },
+          "password": { "type": "string", "title": "Password" }
+        },
+        "type": "object",
+        "required": ["email", "password"],
+        "title": "UserLoginModel"
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": { "anyOf": [{ "type": "string" }, { "type": "integer" }] },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": { "type": "string", "title": "Message" },
+          "type": { "type": "string", "title": "Error Type" }
+        },
+        "type": "object",
+        "required": ["loc", "msg", "type"],
+        "title": "ValidationError"
+      }
+    },
+    "securitySchemes": {
+      "AccessTokenBearer": { "type": "http", "scheme": "bearer" },
+      "RefreshTokenBearer": { "type": "http", "scheme": "bearer" }
+    }
+  }
+}
